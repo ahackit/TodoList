@@ -1,5 +1,5 @@
-from todo import db
-from todo.models import User
+from . import db
+from .models import models
 
 if User.query.filter_by(username='austin').first():
     print('user found')

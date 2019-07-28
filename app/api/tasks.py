@@ -1,13 +1,10 @@
 from flask import render_template, request, Blueprint
 from flask_restful import Resource
-from flask_jwt import JWT, jwt_required
 
 from . import core
 from .. import db, api, app
 from ..models import Tasks, Completed_Tasks
-from ..secure_check import authenticate, identity
 
-jwt = JWT(app, authenticate, identity)
 
 
 class TaskListAPI(Resource):
@@ -47,12 +44,3 @@ class TasksAPI(Resource):
         return [task.json() for task in Tasks.query.all()]
 
 
-api.add_resource(TaskListAPI, '/api/tasks/<string:desc>')
-api.add_resource(TaskListDelete, '/api/tasks/delete/<string:desc>')
-api.add_resource(TaskListComplete, '/api/tasks/complete/<string:desc>')
-api.add_resource(TasksAPI, '/api/tasks')
-
-
-@core.route('/')
-def index():
-    return render_template('index.html')

@@ -4,27 +4,39 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_restful import Api
+from flask_jwt import JWT, jwt_required
+from .secure_check import authenticate, identity
+from config import config
 
-app = Flask(__name__)
-basedir = None
+db = SQLAlchemy()
+api = Api()
+jwt = JWT()
 
-f = open(r'C:\Users\Austin\Google Drive\Code\Projects\ToDo\config.txt', 'r')
-for row in f.readlines():
-    key = row.split('|')[0]
-    value = row.split('|')[1]
-    if key == 'secret_key':
-        app.config['SECRET_KEY'] = value
-    elif key == 'dbpath':
-        basedir = value
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(
-    basedir, 'data.sqlite')
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+def create_app(config_name):
+    app = Flask(__name__)
+    app.config.from_object(config[config_name])
+    config[config_name].init_app(app)
 
-db = SQLAlchemy(app)
-Migrate(app, db)
-api = Api(app)
+    db.init_app(app)
+    jwt.init_app(app, authenticate, identity)
+    api.init_app(api)
+    
+    from .core import core as core_blueprint
+    app.register_blueprint(core_blueprint)
 
-from todo.core.views import core
+    
+    from .api import api as api_blueprint
+    app.register_blueprint(api_blueprint, url_prefix='/api')
+    from .api.tasks import TaskListAPI, TaskListDelete, TaskListComplete, TasksAPI
+    api.add_resource(TaskListAPI, '/tasks/<string:desc>')
+    api.add_resource(TaskListDelete, '/tasks/delete/<string:desc>')
+    api.add_resource(TaskListComplete, '/tasks/complete/<string:desc>')
+    api.add_resource(TasksAPI, '/tasks')
 
-app.register_blueprint(core)
+
+    return app
+
+
+    
+

@@ -1,2 +1,0 @@
-secret_key|asdfsdgadfg
-dbpath|C:\Users\Austin\Google Drive\Code\Projects\ToDo
