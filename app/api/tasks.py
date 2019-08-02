@@ -1,10 +1,10 @@
 from flask import render_template, request, Blueprint
 from flask_restful import Resource
+from flask_jwt import JWT, jwt_required
 
-from . import core
-from .. import db, api, app
+from . import api
+from .. import db, api, jwt
 from ..models import Tasks, Completed_Tasks
-
 
 
 class TaskListAPI(Resource):

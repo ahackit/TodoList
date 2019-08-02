@@ -1,13 +1,13 @@
 from . import db
-from .models import models
+from .models import User
 
-if User.query.filter_by(username='austin').first():
-    print('user found')
-    pass
-else:
-    user = User('austin', 'mycrazypassword')
-    db.session.add(user)
-    db.session.commit()
+# if User.query.filter_by(username='austin').first():
+#     print('user found')
+#     pass
+# else:
+#     user = User('austin', 'mycrazypassword')
+#     db.session.add(user)
+#     db.session.commit()
 
 
 def authenticate(username, password):
